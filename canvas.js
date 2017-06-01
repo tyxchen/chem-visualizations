@@ -18,7 +18,7 @@
 		y2: 500
 	}
 
-	var PARTICLE_COUNT = 50,
+	var PARTICLE_COUNT = 100,
 		PARTICLE_RADIUS = 5,
 		temperature = 294,
 		pressure = 101.3,
@@ -70,38 +70,14 @@
 			return 2;
 		else
 			return 3;
-	}
-
-	// Determine if P is on QR if P, Q & R are colinear
-	var onSegment = function (P, Q, R) {
-		return Math.min(Q.x, R.x) <= P.x && P.x <= Math.max(Q.x, R.x) &&
-			Math.min(Q.y, R.y) <= P.y && P.y <= Math.max(Q.y, R.y);
 	};
 
-	// Find the orientation of (P, Q, R)
-	// 0 = colinear, 1 = cw, 2 = ccw
-	var orientation = function(P, Q, R) {
-		var val = (r.x - p.x) * (q.y - p.y) - (q.x - p.x) * (r.y - q.y);
-
-		return (val === 0) ? 0 : ((val > 0) ? 1 : 2);
+	var squareDist = function (p1, p2) {
+		return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 	};
 
-	// Determine if segments PQ and RS intersect
-	var intersect = function (P, Q, R, S) {
-		var o1 = orientation(P, Q, R);
-		var o2 = orientation(P, Q, S);
-		var o3 = orientation(R, S, P);
-		var o4 = orientation(R, S, Q);
-
-		if (o1 !== o2 && o3 !== o4) return true;
-
-		if ((o1 === 0 && onSegment(P, R, Q)) ||
-			(o2 === 0 && onSegment(P, S, Q)) ||
-			(o3 === 0 && onSegment(R, P, S)) ||
-			(o4 === 0 && onSegment(R, Q, S)))
-			return true;
-
-		return false;
+	var meet = function (p1, p2) {
+		return 4 * PARTICLE_RADIUS * PARTICLE_RADIUS >= squareDist(p1, p2);
 	};
 
 	var init = function () {
@@ -168,6 +144,18 @@
 					particle.y - container.y1);
 			}
 
+			particles.slice(0, i).forEach(function (part) {
+				if (meet(particle, part)) {
+					if (squareDist(particle, part) < PARTICLE_RADIUS * PARTICLE_RADIUS) {
+						return;
+					}
+					// determine bounce off angles
+					var oldDir = particle.dir;
+					particle.dir = part.dir;
+					part.dir = oldDir;
+				}
+			});
+
 			//particle.draw();
 			// ctx.restore();
 		});
@@ -177,20 +165,28 @@
 		window.requestAnimationFrame(animate);
 	};
 
-	$('#temp').addEventListener('mousedown', function () {
-		$('#temp').classList.add('active');
-	});
+	var mousedown = function (el) {
+		return function () {
+			el.classList.add('active');
+		};
+	}, mousemove = function (el, cb) {
+		return function () {
+			cb(el.value);
+		};
+	}, mouseup = function (el) {
+		return function () {
+			el.classList.remove('active');
+		};
+	};
 
-	$('#temp').addEventListener('mousemove', function () {
-		if ($('#temp').classList.contains('active')) {
-			temperature = $('#temp').value;
-			computeSpeed();
-		}
-	});
+	$('#temp').addEventListener('mousedown', mousedown($('#temp')));
 
-	$('#temp').addEventListener('mouseup', function () {
-		$('#temp').classList.remove('active');
-	});
+	$('#temp').addEventListener('mousemove', mousemove($('#temp'), function (t) {
+		temperature = t;
+		computeSpeed();
+	}));
+
+	$('#temp').addEventListener('mouseup', mouseup($('#temp')));
 
 	init();
 	window.requestAnimationFrame(animate);
