@@ -1,0 +1,6 @@
+*.sw*
+*~
+*.tmp
+
+node_modules/
+
