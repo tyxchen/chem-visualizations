@@ -18,7 +18,7 @@
 		y2: 500
 	}
 
-	var PARTICLE_COUNT = 20,
+	var PARTICLE_COUNT = 50,
 		PARTICLE_RADIUS = 5,
 		temperature = 294,
 		pressure = 101.3,
@@ -55,7 +55,7 @@
 	};
 
 	var computeSpeed = function () {
-		speed = temperature / 100;
+		speed = temperature / 50;
 	};
 
 	var inContainer = function (P) {
@@ -176,6 +176,21 @@
 
 		window.requestAnimationFrame(animate);
 	};
+
+	$('#temp').addEventListener('mousedown', function () {
+		$('#temp').classList.add('active');
+	});
+
+	$('#temp').addEventListener('mousemove', function () {
+		if ($('#temp').classList.contains('active')) {
+			temperature = $('#temp').value;
+			computeSpeed();
+		}
+	});
+
+	$('#temp').addEventListener('mouseup', function () {
+		$('#temp').classList.remove('active');
+	});
 
 	init();
 	window.requestAnimationFrame(animate);
