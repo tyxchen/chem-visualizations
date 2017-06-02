@@ -12,16 +12,16 @@
 		ctx = canvas.getContext('2d');
 
 	var container = {
-		x1: 300,
+		x1: canvas.width / 2 - 100,
 		y1: 50,
-		x2: 500,
+		x2: canvas.width / 2 + 100,
 		y2: 550
 	}
 
 	var PARTICLE_COUNT = 100,
 		PARTICLE_RADIUS = 5,
 		temperature = 294,
-		pressure = 101.3,
+		pressure = 1,
 		volume = 1;
 
 	var K = pressure * volume / temperature;
@@ -170,58 +170,130 @@
 		window.requestAnimationFrame(animate);
 	};
 
-	var mousedown = function (el, cb) {
-		return function () {
-			if (!el.disabled) {
-				if (!el.classList.contains('active'))
-					el.classList.add('active');
+	var mousedown = function () {
+		var el = this;
 
-				setTimeout(function () { cb(el.value); }, 1);
+		if (!el.disabled) {
+			if (!el.classList.contains('active')) {
+				el.classList.add('active');
+				el.dataset.original = el.value;
 			}
-		};
-	}, mousemove = function (el, cb) {
-		return function () {
-			if (!el.disabled && el.classList.contains('active'))
-				cb(el.value);
-		};
-	}, mouseup = function (el) {
-		return function () {
-			if (!el.disabled)
-				el.classList.remove('active');
-		};
+
+			setTimeout(function () {
+				if (el.value !== parseInt(el.dataset.original))
+					el.parentNode.classList.add('changed');
+				else
+					el.parentNode.classList.remove('changed');
+
+				el.dispatchEvent(new Event('change'));
+			}, 1);
+		}
+	}, mousemove = function () {
+		var el = this;
+
+		if (!el.disabled && el.classList.contains('active')) {
+			if (el.value !== parseInt(el.dataset.original))
+				el.parentNode.classList.add('changed');
+			else
+				el.parentNode.classList.remove('changed');
+
+			$(el.parentNode, 'span').textContent = el.value;
+
+			el.dispatchEvent(new Event('change'));
+		}
+	}, mouseup = function () {
+		var el = this;
+
+		if (!el.disabled) {
+			el.classList.remove('active');
+			el.dataset.original = null;
+
+			el.dispatchEvent(new Event('change'))
+		}
 	};
+
+	var wrapperMousedown = function (e) {
+		var name = this.id.split('-')[0];
+
+		if (!this.classList.contains('selected')) {
+			this.classList.add('selected');
+			selected[name] = true;
+
+			if (selected.pressure && selected.volume) {
+				$('#temperature-wrapper').classList.add('disabled');
+				$('#temp').setAttribute('disabled', true);
+			}
+
+			if (selected.pressure && selected.temperature) {
+				$('#volume-wrapper').classList.add('disabled');
+				$('#vol').setAttribute('disabled', true);
+			}
+
+			if (selected.volume && selected.temperature) {
+				$('#pressure-wrapper').classList.add('disabled');
+				$('#pre').setAttribute('disabled', true);
+			}
+
+		} else {
+			if (e.target.tagName !== 'INPUT') {
+				this.classList.remove('selected');
+				selected[name] = false;
+
+				$('#controls .disabled').classList.remove('disabled');
+				$('#controls [disabled]').removeAttribute('disabled');
+			}
+		}
+		console.log(selected);
+	};
+
+	var selected = { pressure: false, volume: false, temperature: false };
 
 	// Pressure
-	var pressureListener = function (p) {
-		pressure = p;
+	var pressureListener = function () {
+		pressure = this.value;
 	};
-	$('#pre').addEventListener('mousedown', mousedown($('#pre'), pressureListener));
 
-	$('#pre').addEventListener('mousemove', mousemove($('#pre'), pressureListener));
+	$('#pressure-wrapper').addEventListener('mousedown', wrapperMousedown);
 
-	$('#pre').addEventListener('mouseup', mouseup($('#pre')));
+	$('#pre').addEventListener('mousedown', mousedown);
+
+	$('#pre').addEventListener('mousemove', mousemove);
+
+	$('#pre').addEventListener('mouseup', mouseup);
+
+	$('#pre').addEventListener('change', pressureListener);
 
 	// Volume
-	var volumeListener = function (v) {
-		volume = v;
+	var volumeListener = function () {
+		volume = this.value;
 		computeVolume();
 	};
-	$('#vol').addEventListener('mousedown', mousedown($('#vol'), volumeListener));
 
-	$('#vol').addEventListener('mousemove', mousemove($('#vol'), volumeListener));
+	$('#volume-wrapper').addEventListener('mousedown', wrapperMousedown);
 
-	$('#vol').addEventListener('mouseup', mouseup($('#vol')));
+	$('#vol').addEventListener('mousedown', mousedown);
+
+	$('#vol').addEventListener('mousemove', mousemove);
+
+	$('#vol').addEventListener('mouseup', mouseup);
+
+	$('#vol').addEventListener('change', volumeListener);
 
 	// Temperature
 	var temperatureListener = function (t) {
-		temperature = t;
+		temperature = this.value;
 		computeSpeed();
 	};
-	$('#temp').addEventListener('mousedown', mousedown($('#temp'), temperatureListener));
 
-	$('#temp').addEventListener('mousemove', mousemove($('#temp'), temperatureListener));
+	$('#temperature-wrapper').addEventListener('mousedown', wrapperMousedown);
 
-	$('#temp').addEventListener('mouseup', mouseup($('#temp')));
+	$('#temp').addEventListener('mousedown', mousedown);
+
+	$('#temp').addEventListener('mousemove', mousemove);
+
+	$('#temp').addEventListener('mouseup', mouseup);
+
+	$('#temp').addEventListener('change', temperatureListener);
 
 	init();
 	window.requestAnimationFrame(animate);
