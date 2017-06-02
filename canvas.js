@@ -12,10 +12,10 @@
 		ctx = canvas.getContext('2d');
 
 	var container = {
-		x1: 100,
+		x1: 300,
 		y1: 50,
-		x2: 400,
-		y2: 500
+		x2: 500,
+		y2: 550
 	}
 
 	var PARTICLE_COUNT = 100,
@@ -56,6 +56,11 @@
 
 	var computeSpeed = function () {
 		speed = temperature / 50;
+	};
+
+	var computeVolume = function () {
+		container.x1 = canvas.width / 2 - 100 * volume;
+		container.x2 = canvas.width / 2 + 100 * volume;
 	};
 
 	var inContainer = function (P) {
@@ -165,26 +170,56 @@
 		window.requestAnimationFrame(animate);
 	};
 
-	var mousedown = function (el) {
+	var mousedown = function (el, cb) {
 		return function () {
-			el.classList.add('active');
+			if (!el.disabled) {
+				if (!el.classList.contains('active'))
+					el.classList.add('active');
+
+				setTimeout(function () { cb(el.value); }, 1);
+			}
 		};
 	}, mousemove = function (el, cb) {
 		return function () {
-			cb(el.value);
+			if (!el.disabled && el.classList.contains('active'))
+				cb(el.value);
 		};
 	}, mouseup = function (el) {
 		return function () {
-			el.classList.remove('active');
+			if (!el.disabled)
+				el.classList.remove('active');
 		};
 	};
 
-	$('#temp').addEventListener('mousedown', mousedown($('#temp')));
+	// Pressure
+	var pressureListener = function (p) {
+		pressure = p;
+	};
+	$('#pre').addEventListener('mousedown', mousedown($('#pre'), pressureListener));
 
-	$('#temp').addEventListener('mousemove', mousemove($('#temp'), function (t) {
+	$('#pre').addEventListener('mousemove', mousemove($('#pre'), pressureListener));
+
+	$('#pre').addEventListener('mouseup', mouseup($('#pre')));
+
+	// Volume
+	var volumeListener = function (v) {
+		volume = v;
+		computeVolume();
+	};
+	$('#vol').addEventListener('mousedown', mousedown($('#vol'), volumeListener));
+
+	$('#vol').addEventListener('mousemove', mousemove($('#vol'), volumeListener));
+
+	$('#vol').addEventListener('mouseup', mouseup($('#vol')));
+
+	// Temperature
+	var temperatureListener = function (t) {
 		temperature = t;
 		computeSpeed();
-	}));
+	};
+	$('#temp').addEventListener('mousedown', mousedown($('#temp'), temperatureListener));
+
+	$('#temp').addEventListener('mousemove', mousemove($('#temp'), temperatureListener));
 
 	$('#temp').addEventListener('mouseup', mouseup($('#temp')));
 
