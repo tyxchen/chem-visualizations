@@ -32,21 +32,21 @@
 
 	var CGL = function (data1, data2) {
 		if (!!data2) {
-			if (!data2.hasOwnProperty('P') || !data2.P) {
+			if (!data2.hasOwnProperty('P')) {
 				data2.P = (data1.P * data1.V * data2.T) / (data1.T * data2.V);
-			} else if (!data2.hasOwnProperty('V') || !data2.V) {
+			} else if (!data2.hasOwnProperty('V')) {
 				data2.V = (data1.P * data1.V * data2.T) / (data1.T * data2.P);
-			} else if (!data2.hasOwnProperty('T') || !data2.T) {
+			} else if (!data2.hasOwnProperty('T')) {
 				data2.T = (data2.P * data2.V * data1.T) / (data1.P * data1.V);
 			}
 		} else {
 			data2 = data1;
 
-			if (!data2.hasOwnProperty('P') || !data2.P) {
+			if (!data2.hasOwnProperty('P')) {
 				data2.P = K * data2.T / data2.V;
-			} else if (!data2.hasOwnProperty('V') || !data2.V) {
+			} else if (!data2.hasOwnProperty('V')) {
 				data2.V = K * data2.T / data2.P;
-			} else if (!data2.hasOwnProperty('T') || !data2.T) {
+			} else if (!data2.hasOwnProperty('T')) {
 				data2.T = data2.P * data2.V / K;
 			}
 		}
@@ -54,11 +54,11 @@
 		return data2;
 	};
 
-	var computeSpeed = function () {
+	var updateSpeed = function () {
 		speed = temperature / 50;
 	};
 
-	var computeVolume = function () {
+	var updateVolume = function () {
 		container.x1 = canvas.width / 2 - 100 * volume;
 		container.x2 = canvas.width / 2 + 100 * volume;
 	};
@@ -105,7 +105,7 @@
 			};
 		}
 
-		computeSpeed();
+		updateSpeed();
 	};
 
 	var animate = function () {
@@ -170,128 +170,146 @@
 		window.requestAnimationFrame(animate);
 	};
 
-	var mousedown = function () {
+	var inputstart = function () {
 		var el = this;
 
 		if (!el.disabled) {
 			if (!el.classList.contains('active')) {
 				el.classList.add('active');
-				el.dataset.original = el.value;
+				el.parentNode.classList.remove('slave');
 			}
 
 			setTimeout(function () {
-				if (el.value !== parseInt(el.dataset.original))
-					el.parentNode.classList.add('changed');
-				else
-					el.parentNode.classList.remove('changed');
+				if (selStack.indexOf(el.id) === -1) {
+					selStack.push(el.id);
+
+					if (selStack.length > 2) {
+					var shifted = $('#' + selStack.shift());
+
+						shifted.parentNode.classList.remove('slave');
+					}
+				}
 
 				el.dispatchEvent(new Event('change'));
+
+				onChange();
 			}, 1);
 		}
-	}, mousemove = function () {
+	}, inputchange = function () {
 		var el = this;
 
 		if (!el.disabled && el.classList.contains('active')) {
-			if (el.value !== parseInt(el.dataset.original))
-				el.parentNode.classList.add('changed');
-			else
-				el.parentNode.classList.remove('changed');
+			if (selStack.indexOf(el.id) === -1) {
+				selStack.push(el.id);
+
+				if (selStack.length > 2) {
+					var shifted = $('#' + selStack.shift());
+
+					shifted.parentNode.classList.remove('slave');
+				}
+			}
 
 			$(el.parentNode, 'span').textContent = el.value;
 
 			el.dispatchEvent(new Event('change'));
+
+			onChange();
 		}
-	}, mouseup = function () {
+	}, inputend = function () {
 		var el = this;
 
 		if (!el.disabled) {
 			el.classList.remove('active');
-			el.dataset.original = null;
 
 			el.dispatchEvent(new Event('change'))
 		}
 	};
 
-	var wrapperMousedown = function (e) {
-		var name = this.id.split('-')[0];
+	var selStack = [];
 
-		if (!this.classList.contains('selected')) {
-			this.classList.add('selected');
-			selected[name] = true;
+	var onChange = function () {
+		var data = {}, prop, el;
 
-			if (selected.pressure && selected.volume) {
-				$('#temperature-wrapper').classList.add('disabled');
-				$('#temp').setAttribute('disabled', true);
-			}
-
-			if (selected.pressure && selected.temperature) {
-				$('#volume-wrapper').classList.add('disabled');
-				$('#vol').setAttribute('disabled', true);
-			}
-
-			if (selected.volume && selected.temperature) {
-				$('#pressure-wrapper').classList.add('disabled');
-				$('#pre').setAttribute('disabled', true);
-			}
-
-		} else {
-			if (e.target.tagName !== 'INPUT') {
-				this.classList.remove('selected');
-				selected[name] = false;
-
-				$('#controls .disabled').classList.remove('disabled');
-				$('#controls [disabled]').removeAttribute('disabled');
-			}
+		if (selStack.indexOf('pre') > -1) {
+			data.P = pressure;
 		}
-		console.log(selected);
-	};
 
-	var selected = { pressure: false, volume: false, temperature: false };
+		if (selStack.indexOf('vol') > -1) {
+			data.V = volume;
+		}
+
+		if (selStack.indexOf('temp') > -1) {
+			data.T = temperature;
+		}
+
+		if (selStack.length === 2) {
+			data = CGL(data);
+
+			if (selStack.indexOf('pre') === -1) {
+				prop = 'pre';
+			} else if (selStack.indexOf('vol') === -1) {
+				prop = 'vol';
+			} else if (selStack.indexOf('temp') === -1) {
+				prop = 'temp';
+			}
+
+			data = data[prop[0].toUpperCase()];
+			el = $('#' + prop);
+
+			el.value = data;
+			el.parentNode.classList.add('slave');
+			el.dispatchEvent(new CustomEvent('change', { detail: data }));
+
+			$(el.parentNode, 'span').textContent = data.toString().substr(0, 5);
+		}
+
+		// console.log(selStack);
+	};
 
 	// Pressure
-	var pressureListener = function () {
-		pressure = this.value;
+	var pressureListener = function (e) {
+		pressure = e.detail || this.value;
 	};
 
-	$('#pressure-wrapper').addEventListener('mousedown', wrapperMousedown);
+	$('#pre').addEventListener('mousedown', inputstart);
 
-	$('#pre').addEventListener('mousedown', mousedown);
+	$('#pre').addEventListener('mousemove', inputchange);
 
-	$('#pre').addEventListener('mousemove', mousemove);
+	$('#pre').addEventListener('keydown', inputchange);
 
-	$('#pre').addEventListener('mouseup', mouseup);
+	$('#pre').addEventListener('mouseup', inputend);
 
 	$('#pre').addEventListener('change', pressureListener);
 
 	// Volume
-	var volumeListener = function () {
-		volume = this.value;
-		computeVolume();
+	var volumeListener = function (e) {
+		volume = e.detail || this.value;
+		updateVolume();
 	};
 
-	$('#volume-wrapper').addEventListener('mousedown', wrapperMousedown);
+	$('#vol').addEventListener('mousedown', inputstart);
 
-	$('#vol').addEventListener('mousedown', mousedown);
+	$('#vol').addEventListener('mousemove', inputchange);
 
-	$('#vol').addEventListener('mousemove', mousemove);
+	$('#vol').addEventListener('keydown', inputchange);
 
-	$('#vol').addEventListener('mouseup', mouseup);
+	$('#vol').addEventListener('mouseup', inputend);
 
 	$('#vol').addEventListener('change', volumeListener);
 
 	// Temperature
-	var temperatureListener = function (t) {
-		temperature = this.value;
-		computeSpeed();
+	var temperatureListener = function (e) {
+		temperature = e.detail || this.value;
+		updateSpeed();
 	};
 
-	$('#temperature-wrapper').addEventListener('mousedown', wrapperMousedown);
+	$('#temp').addEventListener('mousedown', inputstart);
 
-	$('#temp').addEventListener('mousedown', mousedown);
+	$('#temp').addEventListener('mousemove', inputchange);
 
-	$('#temp').addEventListener('mousemove', mousemove);
+	$('#temp').addEventListener('keydown', inputchange);
 
-	$('#temp').addEventListener('mouseup', mouseup);
+	$('#temp').addEventListener('mouseup', inputend);
 
 	$('#temp').addEventListener('change', temperatureListener);
 
