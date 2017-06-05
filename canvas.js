@@ -13,9 +13,9 @@
 
 	var container = {
 		x1: canvas.width / 2 - 100,
-		y1: 50,
+		y1: 100,
 		x2: canvas.width / 2 + 100,
-		y2: 550
+		y2: 450
 	}
 
 	var PARTICLE_COUNT = 100,
@@ -260,7 +260,12 @@
 			el.parentNode.classList.add('slave');
 			el.dispatchEvent(new CustomEvent('change', { detail: data }));
 
-			$(el.parentNode, 'span').textContent = data.toString().substr(0, 5);
+			if (isFinite(data))
+				$(el.parentNode, 'span').textContent = data.toString().substr(0, 5);
+			else if (!isNaN(data))
+				$(el.parentNode, 'span').innerHTML = '&infin;';
+			else
+				$(el.parentNode, 'span').textContent = 'waterudoingnodivide0by0';
 		}
 
 		// console.log(selStack);
