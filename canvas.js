@@ -86,6 +86,8 @@
 	};
 
 	var init = function () {
+		ctx.strokeStyle = 'green';
+
 		for (var i=0; i<particles.length; i++) {
 			particles[i] = {
 				x: (container.x2 - container.x1 - 1) * Math.random() + container.x1 + 1,
@@ -111,7 +113,7 @@
 	var animate = function () {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-		ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+		ctx.fillStyle = '#eee';
 
 		ctx.beginPath();
 		ctx.moveTo(container.x1 - PARTICLE_RADIUS, container.y1 - PARTICLE_RADIUS);
@@ -120,6 +122,7 @@
 		ctx.lineTo(container.x1 - PARTICLE_RADIUS, container.y2 + PARTICLE_RADIUS);
 		ctx.closePath();
 		ctx.stroke();
+		ctx.fill();
 
 		ctx.fillStyle = '#f52f2f';
 
