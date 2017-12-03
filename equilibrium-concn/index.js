@@ -348,6 +348,12 @@
     reset();
   };
 
+  window.onresize = function() {
+    state.x = 50;
+    canvas.height = window.innerHeight - 5*parseInt(window.getComputedStyle(canvas, null).fontSize);
+    canvas.width = window.innerWidth - 240;
+  };
+
   canvas.height = window.innerHeight - 5*parseInt(window.getComputedStyle(canvas, null).fontSize);
   canvas.width = window.innerWidth - 240;
 
