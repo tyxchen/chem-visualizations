@@ -56,17 +56,27 @@
     }
   }
 
-  function* createNewCurve(start, dx, mult) {
+  function createNewCurve(start, dx, mult) {
     start = molsToPx(start);
     dx = molsToPx(dx);
 
-    var t = Math.floor(Math.E*Math.abs(dx)), i = 0;
+    var t = Math.floor(Math.E*Math.abs(dx)), i = 0, innerState = [];
 
     while (i < t) {
       //yield start + (dx/(Math.expm1(-300/72)))*Math.expm1(-(Math.abs(dx)*i++)/(72*Math.E))*mult;
-      yield pxToMols(start + (dx/Math.log1p((Math.abs(dx)*Math.abs(dx))/40))*Math.log1p((Math.abs(dx)*i++)/(40*Math.E))*mult);
+      //yield pxToMols(start + (dx/Math.log1p((Math.abs(dx)*Math.abs(dx))/40))*Math.log1p((Math.abs(dx)*i++)/(40*Math.E))*mult);
+      innerState.push(pxToMols(start + (dx/Math.log((Math.abs(dx)*Math.abs(dx))/40+1))*Math.log((Math.abs(dx)*i++)/(40*Math.E)+1)*mult));
     }
-    return pxToMols(start + dx * mult);
+    innerState.push(pxToMols(start + dx * mult));
+
+    return {
+      next: function() {
+        return {
+          value: innerState.shift(),
+          done: innerState.length > 0
+        }
+      }
+    }
   }
 
   function moveTo(x, y) {
@@ -253,6 +263,10 @@
   };
 
   canvas.onclick = function() {
+    inputA.disabled = false;
+    inputB.disabled = false;
+    inputC.disabled = false;
+
     ctx.clearRect(canvas.width/2 - 43, canvas.height/2 - 53, 86, 106);
     draw(true);
 
@@ -357,4 +371,8 @@
   updateStats();
   draw();
   reset();
+
+  inputA.disabled = true;
+  inputB.disabled = true;
+  inputC.disabled = true;
 })();

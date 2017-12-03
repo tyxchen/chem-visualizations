@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width">
   <title>Chemistry Visualizations</title>
   <style>
-  body {display:flex;flex-direction:column;height:100%;min-height:100vh;font-family:sans-serif;margin:0}
+  body {display:flex;flex-direction:column;height:100vh;min-height:100vh;font-family:sans-serif;margin:0}
   main {display:flex;align-items:center;justify-content:center;flex:1 0 auto;flex-wrap:wrap;max-width:1200px;height:100%;margin:auto}
   footer {width:100%;flex:none;text-align:center;margin:2em 0;}
   a:link,a:visited {color:#12f;text-decoration:none;}
@@ -29,6 +29,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js" integrity="sha256-wMQrtOX6Wcd+W3fOZ8JG6NGYqoZfAKZ6yH+DHd+yGwg=" crossorigin="anonymous"></script>
   <script>
+  body.style.height = window.innerHeight;
   [].slice.call(document.querySelectorAll('.viz')).forEach(function(a){
     a.style.backgroundColor=randomColor({luminosity:'light'});
   });
