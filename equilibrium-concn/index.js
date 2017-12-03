@@ -187,6 +187,7 @@
     ctx.font = '12px monospace';
 
     ctx.fillRect(50, 0, 1, canvas.height);
+    ctx.fillRect(50, 0, canvas.width - 130, 1);
     ctx.fillRect(50, canvas.height - 1, canvas.width - 130, 1);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("Concentration (mol/L)", -canvas.height/2 - 75, 30);
@@ -347,8 +348,8 @@
     reset();
   };
 
-  canvas.height = window.innerHeight - 40 - parseInt(window.getComputedStyle(canvas, null).fontSize);
-  canvas.width = window.innerWidth - 320;
+  canvas.height = window.innerHeight - 5*parseInt(window.getComputedStyle(canvas, null).fontSize);
+  canvas.width = window.innerWidth - 240;
 
   state.curveA = createNewCurve(state.A, solveChange(), -1);
   state.curveB = createNewCurve(state.B, solveChange(), 1);

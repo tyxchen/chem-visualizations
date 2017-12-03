@@ -2,9 +2,9 @@ html,body { font-family:sans-serif;padding:0;border:0;margin:0;overflow:hidden; 
 .A { color: red; }
 .B { color: green; }
 .C { color: blue; }
-form { float: right; width: 320px; box-sizing: border-box; line-height: 1.6; padding: 1em; }
+form { position:fixed;top:2em;right:0;bottom:3em;width:320px;box-sizing:border-box;background-color:#fff;line-height:1.6;padding:0 1.5em;border-left:1px solid #555;}
 label,input { display: block; font-weight:700; width: 100%; margin: 0; }
-.stats { background-color: #eee; overflow: hidden; padding: 1em; border-radius: .5em; margin: 1em 0; }
+.stats { background-color: #eee; overflow: hidden; padding: 1em; border-radius: .5em; margin-bottom: 1em; }
 .stat { width: 50%; font-size: 1.2em; }
 .stat:nth-child(odd) { float: left; }
 .stat:nth-child(even) { float: right; }
