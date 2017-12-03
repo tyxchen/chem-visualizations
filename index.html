@@ -6,13 +6,14 @@
   <title>Chemistry Visualizations</title>
   <style>
   body {display:flex;flex-direction:column;height:100vh;min-height:100vh;font-family:sans-serif;margin:0}
-  main {display:flex;align-items:center;justify-content:center;flex:1 0 auto;flex-wrap:wrap;max-width:1200px;height:100%;margin:auto}
+  main {display:flex;align-items:center;justify-content:center;flex:1 0 auto;flex-wrap:wrap;max-width:1200px;margin:auto}
   footer {width:100%;flex:none;text-align:center;margin:2em 0;}
   a:link,a:visited {color:#12f;text-decoration:none;}
   a:hover {opacity:.7}
   .viz {display:flex;align-items:center;width:18rem;height:18rem;text-align:center;max-width:90%;background-color:#eee;padding:1rem;margin:2rem;opacity:.8;box-shadow:0 0 12px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.25);transition:.23s;}
   .viz:link,.viz:visited {color:#000;}
   .viz:hover{color:#333;opacity:1}
+  .viz h1{max-width:100%}
   </style>
 </head>
 <body>
@@ -27,9 +28,9 @@
 
   <footer><a href="https://github.com/tyxchen/chem-visualizations">chem-visualizations</a> by <a href="https://github.com/tyxchen">tyxchen</a></footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js" integrity="sha256-wMQrtOX6Wcd+W3fOZ8JG6NGYqoZfAKZ6yH+DHd+yGwg=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.1/randomColor.min.js" integrity="sha256-uX1TSjwhXnE8T0XHVMgI5mlDbkVpuErfGnvPkceRIaw=" crossorigin="anonymous"></script>
   <script>
-  body.style.height = window.innerHeight;
+  document.body.style.height = window.innerHeight;
   [].slice.call(document.querySelectorAll('.viz')).forEach(function(a){
     a.style.backgroundColor=randomColor({luminosity:'light'});
   });
