@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Equilibrium Simulation</title>
+  <link href="index.css" rel="stylesheet">
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <canvas width="800" height="500" style="margin-top:2em;cursor:pointer"></canvas>
+  <form>
+    <div class="stats">
+      <div class="stat" id="statA">
+        <label class="A">[A]</label>
+        <a></a>
+      </div>
+      <div class="stat" id="statK">
+        <label>K</label>
+        <a></a>
+      </div>
+      <div class="stat" id="statB">
+        <label class="B">[B]</label>
+        <a></a>
+      </div>
+      <div class="stat" id="statQ">
+        <label>Q</label>
+        <a></a>
+      </div>
+      <div class="stat" id="statC">
+        <label class="C">[C]</label>
+        <a></a>
+      </div>
+      <div class="stat" id="statE">
+        <label>Eq&#039;m (R<span style="line-height:0"></span>P)</label>
+        <input type="range" min="-2" max="2" step="0.00001" disabled>
+      </div>
+    </div>
+    <br style="clear:both">
+    <div class="inputgrp">
+      <label>&Delta;[A]: <a>0</a></label>
+      <input type="range" min="-2" max="2" value="0" step="0.1" id="inputA">
+    </div>
+    <div class="inputgrp">
+      <label>&Delta;[B]: <a>0</a></label>
+      <input type="range" min="-2" max="2" value="0" step="0.1" id="inputB">
+    </div>
+    <div class="inputgrp">
+      <label>&Delta;[C]: <a>0</a></label>
+      <input type="range" min="-2" max="2" value="0" step="0.1" id="inputC">
+    </div>
+    <p>All units in mol/L</p>
+    <div class="btngrp">
+      <button class="primary" id="change" disabled>Change</button>
+      <button id="reset" disabled>Reset</button>
+    </div>
+  </form>
+  <div style="width:calc(100% - 320px);font:12px monospace;text-align:center;color:#555">Time (s)</div>
+</body>
+</html>
