@@ -2,22 +2,30 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
   <title>Chemistry Visualizations</title>
   <style>
-  body {display:flex;align-items:center;justify-content:center;flex-wrap:wrap;max-width:1200px;height:100vh;font-family: sans-serif;margin:auto}
-  .viz {width:18rem;height:18rem;text-align:center;max-width:90%;background-color:#eee;padding:1rem;margin:2rem;opacity:1;box-shadow:0 0 2px rgba(0,0,0,.3),0 1px 5px rgba(0,0,0,.3);transition:opacity .23s;}
-  .viz h1 { margin-top: 6rem;}
-  .viz:hover{opacity:.8}
-  a:link,a:visited {color:#222;text-decoration:none;}
+  body {display:flex;flex-direction:column;height:100%;min-height:100vh;font-family:sans-serif;margin:0}
+  main {display:flex;align-items:center;justify-content:center;flex:1 0 auto;flex-wrap:wrap;max-width:1200px;height:100%;margin:auto}
+  footer {width:100%;flex:none;text-align:center;margin:2em 0;}
+  a:link,a:visited {color:#12f;text-decoration:none;}
+  a:hover {opacity:.7}
+  .viz {display:flex;align-items:center;width:18rem;height:18rem;text-align:center;max-width:90%;background-color:#eee;padding:1rem;margin:2rem;opacity:.8;box-shadow:0 0 12px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.25);transition:.23s;}
+  .viz:link,.viz:visited {color:#000;}
+  .viz:hover{color:#333;opacity:1}
   </style>
 </head>
 <body>
+  <main>
   <a class="viz" href="cgl/">
     <h1>Combined Gas Law</h1>
   </a>
   <a class="viz" href="equilibrium-concn/">
     <h1>Equilibrium (Conc'n)</h1>
   </a>
+  </main>
+
+  <footer><a href="https://github.com/tyxchen/chem-visualizations">chem-visualizations</a> by <a href="https://github.com/tyxchen">tyxchen</a></footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js" integrity="sha256-wMQrtOX6Wcd+W3fOZ8JG6NGYqoZfAKZ6yH+DHd+yGwg=" crossorigin="anonymous"></script>
   <script>
