@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chemistry Visualizations</title>
+  <style>
+  body {display:flex;align-items:center;justify-content:center;flex-wrap:wrap;max-width:1200px;height:100vh;font-family: sans-serif;margin:auto}
+  .viz {width:18rem;height:18rem;text-align:center;max-width:90%;background-color:#eee;padding:1rem;margin:2rem;opacity:1;box-shadow:0 0 2px rgba(0,0,0,.3),0 1px 5px rgba(0,0,0,.3);transition:opacity .23s;}
+  .viz h1 { margin-top: 6rem;}
+  .viz:hover{opacity:.8}
+  a:link,a:visited {color:#222;text-decoration:none;}
+  </style>
+</head>
+<body>
+  <a class="viz" href="cgl/">
+    <h1>Combined Gas Law</h1>
+  </a>
+  <a class="viz" href="equilibrium-concn/">
+    <h1>Equilibrium (Conc'n)</h1>
+  </a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js" integrity="sha256-wMQrtOX6Wcd+W3fOZ8JG6NGYqoZfAKZ6yH+DHd+yGwg=" crossorigin="anonymous"></script>
+  <script>
+  [].slice.call(document.querySelectorAll('.viz')).forEach(function(a){
+    a.style.backgroundColor=randomColor({luminosity:'light'});
+  });
+  </script>
+</body>
+</html>
